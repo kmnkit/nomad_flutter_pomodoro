@@ -19,14 +19,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void onTick(Timer timer) {
     if (totalSeconds == 0) {
       setState(() {
-        totalPomodoros++;
+        ++totalPomodoros;
         isRunning = false;
         totalSeconds = twentyFiveMinutes;
       });
       timer.cancel();
     } else {
       setState(() {
-        totalSeconds--;
+        --totalSeconds;
       });
     }
   }
@@ -45,6 +45,14 @@ class _HomeScreenState extends State<HomeScreen> {
     timer.cancel();
     setState(() {
       isRunning = false;
+    });
+  }
+
+  void onStopPressed() {
+    onPausePressed();
+    setState(() {
+      totalSeconds = twentyFiveMinutes;
+      totalPomodoros = 0;
     });
   }
 
@@ -73,20 +81,34 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Flexible(
-            flex: 2,
-            child: Center(
-              child: IconButton(
-                color: Theme.of(context).cardColor,
-                iconSize: 98,
-                icon: Icon(
-                  isRunning
-                      ? Icons.pause_circle_outline
-                      : Icons.play_circle_outline,
-                ),
-                onPressed: isRunning ? onPausePressed : onStartPressed,
-              ),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            // Running 상태가 아닐 때는 play 버튼만 보여준다.
+            children: !isRunning
+                ? [
+                    IconButton(
+                      onPressed: onStartPressed,
+                      color: Theme.of(context).cardColor,
+                      iconSize: 98,
+                      icon: const Icon(Icons.play_circle_outline),
+                    ),
+                  ]
+                : [
+                    IconButton(
+                      color: Theme.of(context).cardColor,
+                      iconSize: 98,
+                      icon: const Icon(
+                        Icons.pause_circle_outline,
+                      ),
+                      onPressed: onPausePressed,
+                    ),
+                    IconButton(
+                      color: Theme.of(context).cardColor,
+                      iconSize: 98,
+                      icon: const Icon(Icons.stop_circle_rounded),
+                      onPressed: onStopPressed,
+                    )
+                  ],
           ),
           Flexible(
             flex: 1,
